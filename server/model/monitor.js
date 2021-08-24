@@ -185,38 +185,21 @@ class Monitor extends BeanModel {
                     bean.ping = dayjs().valueOf() - startTime;
 
                     if (this.dns_resolve_type == "A" || this.dns_resolve_type == "AAAA") {
-                        dnsMessage += "Records: ";
-                        dnsRes.forEach(record => {
-                            dnsMessage += `${record} | `;
-                        });
-                        dnsMessage = dnsMessage.slice(0, -2)
+                        dnsMessage += "Records: " + dnsRes.join(" | ");
                     } else if (this.dns_resolve_type == "CNAME" || this.dns_resolve_type == "PTR") {
                         dnsMessage = dnsRes[0];
                     } else if (this.dns_resolve_type == "CAA") {
                         dnsMessage = dnsRes[0].issue;
                     } else if (this.dns_resolve_type == "MX") {
-                        dnsRes.forEach(record => {
-                            dnsMessage += `Hostname: ${record.exchange} - Priority: ${record.priority} | `;
-                        });
-                        dnsMessage = dnsMessage.slice(0, -2)
+                        dnsMessage += dnsRes.map(record => `Server: ${record.exchange} - Priority: ${record.priority}`).join(" | ");
                     } else if (this.dns_resolve_type == "NS") {
-                        dnsMessage += "Servers: ";
-                        dnsRes.forEach(record => {
-                            dnsMessage += `${record} | `;
-                        });
-                        dnsMessage = dnsMessage.slice(0, -2)
+                        dnsMessage += "Servers: " + dnsRes.join(" | ");
                     } else if (this.dns_resolve_type == "SOA") {
                         dnsMessage += `NS-Name: ${dnsRes.nsname} | Hostmaster: ${dnsRes.hostmaster} | Serial: ${dnsRes.serial} | Refresh: ${dnsRes.refresh} | Retry: ${dnsRes.retry} | Expire: ${dnsRes.expire} | MinTTL: ${dnsRes.minttl}`;
                     } else if (this.dns_resolve_type == "SRV") {
-                        dnsRes.forEach(record => {
-                            dnsMessage += `Name: ${record.name} | Port: ${record.port} | Priority: ${record.priority} | Weight: ${record.weight} | `;
-                        });
-                        dnsMessage = dnsMessage.slice(0, -2)
+                        dnsMessage += dnsRes.map(record => `Name: ${record.name} | Port: ${record.port} | Priority: ${record.priority} | Weight: ${record.weight}`).join(" | ");
                     } else if (this.dns_resolve_type == "TXT") {
-                        dnsRes.forEach(record => {
-                            dnsMessage += `Record: ${record} | `;
-                        });
-                        dnsMessage = dnsMessage.slice(0, -2)
+                        dnsMessage += dnsRes.map(record => `Record: ${record}`).join(" | ");
                     }
 
                     bean.msg = dnsMessage;
